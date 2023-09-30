@@ -1,0 +1,17 @@
+[package]
+name = "blackbone-sys"
+version = "0.1.0"
+license = "MIT"
+description = "FFI bindings to Blackbone"
+repository = "https://github.com/smallevilbeast/rust-blackbone"
+readme = "README.md"
+categories = ["blackbone", "external-ffi-bindings"]
+links = "blackbone"
+build = "build/main.rs"
+edition = "2021"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.68.1"
+cc = "1.0.83"
