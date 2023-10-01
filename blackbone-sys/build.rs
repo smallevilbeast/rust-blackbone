@@ -56,7 +56,7 @@ fn build_and_link(vsproject_dir: &PathBuf, vsproject_name: &str, lib_name: &str)
     // Tell cargo to tell rustc to link the vc++ library.
     println!("cargo:rustc-link-search=native={}", build_lib_dir.display());
 
-    // when use `cargo:rustc-link-lib=statuc={}` is not working, why?
+    // when use `cargo:rustc-link-lib=static={}` is not working, why?
     println!("cargo:rustc-link-lib={}", lib_name);
 }
 
