@@ -8,7 +8,13 @@
 extern "C" {
 #endif // __cplusplus
 
+
+
 typedef PVOID ProcessPtr;
+
+// callbacks
+typedef void (*PROCENUMBYNAMEPROC)(DWORD pid, LPARAM lParam);
+
 ProcessPtr Process_Create();
 void Process_Destroy(ProcessPtr process);
 NTSTATUS Process_Attach(ProcessPtr process, DWORD pid, DWORD access);
@@ -30,6 +36,7 @@ NTSTATUS Process_Resume(ProcessPtr process);
 DWORD Process_pid(ProcessPtr process);
 BOOL Process_valid(ProcessPtr process);
 NTSTATUS Process_Terminate(ProcessPtr process, DWORD code);
+void Process_EnumByName(const wchar_t* name, PROCENUMBYNAMEPROC lpEnumFunc, LPARAM lParam);
 
 
 #ifdef __cplusplus

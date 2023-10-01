@@ -3,6 +3,8 @@
 use crate::types::*;
 
 pub type ProcessPtr = PVOID;
+pub type PROCENUMBYNAMEPROC =
+    ::std::option::Option<unsafe extern "C" fn(pid: DWORD, lParam: LPARAM)>;
 extern "C" {
     pub fn Process_Create() -> ProcessPtr;
 }
@@ -53,4 +55,7 @@ extern "C" {
 }
 extern "C" {
     pub fn Process_Terminate(process: ProcessPtr, code: DWORD) -> NTSTATUS;
+}
+extern "C" {
+    pub fn Process_EnumByName(name: *const wchar_t, lpEnumFunc: PROCENUMBYNAMEPROC, lParam: LPARAM);
 }

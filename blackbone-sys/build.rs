@@ -87,4 +87,6 @@ fn main() {
     let blackbone_dir = get_blackbone_folder();
     build_and_link(&blackbone_dir, "Blackbone.sln", "Blackbone");
 
+    generate_bindings();
+
 }

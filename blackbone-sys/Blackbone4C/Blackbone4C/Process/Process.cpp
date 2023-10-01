@@ -74,3 +74,13 @@ NTSTATUS Process_Terminate(ProcessPtr process, DWORD code)
 
 	return static_cast<Process*>(process)->Terminate(code);
 }
+
+void Process_EnumByName(const wchar_t* name, PROCENUMBYNAMEPROC lpEnumFunc, LPARAM lParam)
+{
+	auto pidList = Process::EnumByName(name);
+	for (auto pid : pidList) {
+		if (lpEnumFunc != nullptr) {
+			lpEnumFunc(pid, lParam);
+		}
+	}
+}
