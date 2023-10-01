@@ -46,6 +46,7 @@ version = "0.1.0"
 dependencies = [
  "bindgen",
  "cc",
+ "winapi",
 ]
 
 [[package]]
@@ -81,6 +82,13 @@ dependencies = [
  "glob",
  "libc",
  "libloading",
+]
+
+[[package]]
+name = "demo"
+version = "0.1.0"
+dependencies = [
+ "blackbone-sys",
 ]
 
 [[package]]

@@ -1,0 +1,7 @@
+﻿#ifndef BLACKBONE_CONFIG_H
+#define BLACKBONE_CONFIG_H
+
+#define WIN32_LEAN_AND_MEAN 
+
+
+#endif //BLACKBONE_CONFIG_H
