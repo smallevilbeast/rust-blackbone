@@ -84,3 +84,62 @@ void Process_EnumByName(const wchar_t* name, PROCENUMBYNAMEPROC lpEnumFunc, LPAR
 		}
 	}
 }
+
+void Process_EnumHandles(ProcessPtr process, PROCHANDLEENUMPROC lpEnumFunc, LPARAM lParam)
+{
+	auto result = static_cast<Process*>(process)->EnumHandles();
+	
+	for (auto& cppHandleInfo : *result) {
+		if (lpEnumFunc != nullptr) {
+			Process_SectionInfo sectionInfo = { 0 };
+			if (cppHandleInfo.section.get() != nullptr) {
+				sectionInfo.attrib = cppHandleInfo.section->attrib;
+				sectionInfo.size = cppHandleInfo.section->size;
+			}
+
+			Process_HandleInfo handleInfo = { 0 };
+			handleInfo.handle = cppHandleInfo.handle;
+			handleInfo.access = cppHandleInfo.access;
+			handleInfo.flags = cppHandleInfo.flags;
+			handleInfo.pObject = cppHandleInfo.pObject;
+			handleInfo.typeName = cppHandleInfo.typeName.c_str();
+			handleInfo.name = cppHandleInfo.name.c_str();
+			handleInfo.section = &sectionInfo;
+
+			lpEnumFunc(&handleInfo, lParam);
+		}
+	}
+}
+
+void Process_EnumByNameOrPID(DWORD pid, const wchar_t* name, BOOL includeThreads, PROCPROCESSENUMPROC lpEnumFunc, LPARAM lParam)
+{
+	std::wstring sName;
+	if (name != nullptr) {
+		sName = name;
+	}
+
+	bool bIncludeThreads = includeThreads == TRUE;
+
+	auto result = Process::EnumByNameOrPID(pid, sName, bIncludeThreads);
+	for (auto& cppProcessInfo : *result) {
+		if (lpEnumFunc != nullptr) {
+			Process_ProcessInfo processInfo = { 0 };
+			processInfo.pid = cppProcessInfo.pid;
+			processInfo.imageName = cppProcessInfo.imageName.c_str();
+
+			std::vector<Process_ThreadInfo> threadInfos;
+			for (auto& cppThreadInfo : cppProcessInfo.threads) {
+				Process_ThreadInfo threadInfo = { 0 };
+				threadInfo.tid = cppThreadInfo.tid;
+				threadInfo.startAddress = cppThreadInfo.startAddress;
+				threadInfo.mainThread = cppThreadInfo.mainThread ? TRUE : FALSE;
+				threadInfos.push_back(threadInfo);
+			}
+			processInfo.threads = threadInfos.data();
+			processInfo.threadCount = threadInfos.size();
+
+			lpEnumFunc(&processInfo, lParam);
+		}
+	}
+}
+

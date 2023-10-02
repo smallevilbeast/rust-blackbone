@@ -2,9 +2,44 @@
 
 use crate::types::*;
 
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Process_SectionInfo {
+    pub size: u64,
+    pub attrib: u32,
+}
+#[repr(C)]
+pub struct Process_HandleInfo {
+    pub handle: HANDLE,
+    pub access: u32,
+    pub flags: u32,
+    pub pObject: u64,
+    pub typeName: *const wchar_t,
+    pub name: *const wchar_t,
+    pub section: *mut Process_SectionInfo,
+}
+#[repr(C)]
+pub struct Process_ThreadInfo {
+    pub tid: u32,
+    pub startAddress: usize,
+    pub mainThread: BOOL,
+}
+#[repr(C)]
+pub struct Process_ProcessInfo {
+    pub pid: DWORD,
+    pub imageName: *const wchar_t,
+    pub threads: *mut Process_ThreadInfo,
+    pub threadCount: usize,
+}
 pub type ProcessPtr = PVOID;
 pub type PROCENUMBYNAMEPROC =
     ::std::option::Option<unsafe extern "C" fn(pid: DWORD, lParam: LPARAM)>;
+pub type PROCHANDLEENUMPROC = ::std::option::Option<
+    unsafe extern "C" fn(handleInfo: *mut Process_HandleInfo, lParam: LPARAM),
+>;
+pub type PROCPROCESSENUMPROC = ::std::option::Option<
+    unsafe extern "C" fn(processInfo: *mut Process_ProcessInfo, lParam: LPARAM),
+>;
 extern "C" {
     pub fn Process_Create() -> ProcessPtr;
 }
@@ -57,5 +92,17 @@ extern "C" {
     pub fn Process_Terminate(process: ProcessPtr, code: DWORD) -> NTSTATUS;
 }
 extern "C" {
+    pub fn Process_EnumHandles(process: ProcessPtr, lpEnumFunc: PROCHANDLEENUMPROC, lParam: LPARAM);
+}
+extern "C" {
     pub fn Process_EnumByName(name: *const wchar_t, lpEnumFunc: PROCENUMBYNAMEPROC, lParam: LPARAM);
+}
+extern "C" {
+    pub fn Process_EnumByNameOrPID(
+        pid: DWORD,
+        name: *const wchar_t,
+        includeThreads: BOOL,
+        lpEnumFunc: PROCPROCESSENUMPROC,
+        lParam: LPARAM,
+    );
 }

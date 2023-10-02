@@ -81,12 +81,14 @@ fn generate_bindings() {
 }
 
 fn main() {
+
+    generate_bindings();
+    
+
     let blackbone4c_dir = get_blackbone4c_folder();
     build_and_link(&blackbone4c_dir, "Blackbone4C.sln", "Blackbone4C");
 
     let blackbone_dir = get_blackbone_folder();
     build_and_link(&blackbone_dir, "Blackbone.sln", "Blackbone");
-
-    generate_bindings();
 
 }
